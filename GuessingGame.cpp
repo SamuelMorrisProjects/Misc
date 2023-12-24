@@ -1,8 +1,7 @@
 #include <random>
 #include <iostream> 
 using namespace std; 
-  
-// Driver Code 
+  
 int main() 
 { 
     int guess;
