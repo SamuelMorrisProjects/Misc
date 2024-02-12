@@ -6,9 +6,9 @@ class Node:
         self.value = value 
         self.pointer =pointer
     def __str__(self):
-        """"""
-        return f"[{self.value}] -> {self.pointer}"
-
+        """Returns a string reprenstaion of said node. Recursive method in nature"""
+        return f"|{self.value}| -> {self.pointer}"
+    
 class ssl:
     """Singly linked lists class"""
     def __init__(self, param=None) -> None:
@@ -23,7 +23,7 @@ class ssl:
     def __str__(self) -> str:
         """Returns a string represnation of the linked list"""
         if self._isEmpty():
-            return "[]"
+            return "||"
         return str(self.head)
     
     def __iter__(self):
@@ -32,10 +32,65 @@ class ssl:
         while start:
             yield start.value
             start = start.pointer
+    
+    def __add__(self, other):
+        Internal_list = ssl(self)
+        if isinstance(other, ssl):
+            Internal_list.tail.pointer = other.head
+            return Internal_list
+        else:
+            raise TypeError (f"Can only concatenate ssl with ssl (not {type(other)}) to ssl ")
+
+    def removeAt(self, index:int):
+        """Removes a Node at a given index"""
+        length = len(self)
+        if index>length or index<0:
+            raise IndexError(f"Index:{index} is out of bounds")
+        if length ==1:
+            return self.clear()
+        previous = self.head
+        start = self.head.pointer
+        for i in range (index-1):
+            previous, start = start, start.pointer
+        previous.pointer = start.pointer
+
+    def popAt(self, index:int):
+        """Removes a value at a given index then returns said value"""
+        length = len(self)
+        if index>=length or index<0:
+            raise IndexError(f"Index:{index} is out of bounds")
+        previous = self.head
+        start = self.head.pointer
+        if length ==1:
+            removed_val = previous.value
+            self.clear()
+            return removed_val
+        for i in range (index-1):
+            previous, start = start, start.pointer
+        removed_val = previous.value
+        previous.pointer = start.pointer
+        return removed_val
+    
+    def index(self, value):
+        if self._isEmpty():
+            raise ValueError(f"{value} is not in linked list")
+        start = self.head
+        count = 0
+        if start.value == value:
+            return count
+        elif self.tail.value == value:
+            return len(self)-1
+        else:
+            while start.value != value and start.pointer != None:
+                count+=1
+                start= start.pointer
+            if count == 0 or count== len(self)-1:
+                raise ValueError(f"{value} is not in linked list")
+            return count
 
     def __getitem__(self, index):
         """Gets a item based on its index within the linked list, 
-        Supports slicing but not negative indexs"""
+        Supports slicing but not negative indexs. Recursive method"""
         if isinstance(index, int):
             if self._isInRange(index):
                 start =self.head
@@ -65,7 +120,7 @@ class ssl:
             self.head = self.tail = Node(value,self.head)
         else:
             self.head = Node(value,self.head)
-            
+
     def reverse(self) ->None:
         """Reverses the order of the list"""
         reversed_ssl = ssl()
@@ -84,6 +139,7 @@ class ssl:
     def clear(self) ->None:
         """Clears the linked list"""
         self.head = None
+        self.tail = None
 
     def _isEmpty(self) -> bool:
         """ Internal method of the linked list.\n
@@ -96,8 +152,7 @@ class ssl:
         if value in range (0, len(self)):
             return True
         return False
+    
+if __name__ == "__main__":
+    print(ssl("HelloWorld :)"))
 
-sslw = ssl((2,3,5,4,9))
-print(sslw)
-(sslw.removeAt(2))
-print(sslw)
